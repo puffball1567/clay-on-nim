@@ -1,0 +1,6 @@
+nimcache/
+*.o
+*.so
+*.dylib
+*.dll
+tests/smoke

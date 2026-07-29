@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jiro4989/setup-nim-action@v2
+        with:
+          nim-version: '2.2.10'
+
+      - name: Validate package metadata and Nim sources
+        run: |
+          nimble check
+          nim check src/clayonnim.nim
+
+      - name: Build external Clay implementation
+        run: |
+          git clone --depth 1 https://github.com/nicbarker/clay.git /tmp/clay
+          printf '#define CLAY_IMPLEMENTATION\n#include "clay.h"\n' > /tmp/clay/clay_impl.c
+          cc -I/tmp/clay -c /tmp/clay/clay_impl.c -o /tmp/clay_impl.o
+
+      - name: Run smoke test against Clay
+        run: |
+          nim c -r --out:/tmp/clayonnim-smoke --passC:-I/tmp/clay \
+            --passL:/tmp/clay_impl.o --path:src tests/smoke.nim
