@@ -1,4 +1,4 @@
-version = "0.1.0"
+version = "0.1.1"
 author = "clay-on-nim contributors"
 description = "Nim bindings for the Clay C UI layout library"
 license = "MIT"

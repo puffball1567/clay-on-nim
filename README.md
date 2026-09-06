@@ -1,11 +1,17 @@
 # clay-on-nim
 
-MIT-licensed Nim bindings for [Clay](https://github.com/nicbarker/clay) 0.14, a C UI layout library.
+MIT-licensed Nim bindings for [Clay](https://github.com/nicbarker/clay), a C UI layout library.
 Clay itself is not included in this repository.
+
+Version `0.1.1` targets Clay revision
+[`e6cc36941ab2af5d81107617039d6f527a1c660b`](https://github.com/nicbarker/clay/commit/e6cc36941ab2af5d81107617039d6f527a1c660b).
+This is a post-0.14 development revision containing API additions such as
+transitions. It is not ABI-compatible with the `v0.14` release header, so use
+the exact supported revision.
 
 ## Setup
 
-1. Obtain the Clay release you want to use and place `clay.h` in a directory such as `third_party/clay/`.
+1. Obtain the supported Clay revision and place `clay.h` in a directory such as `third_party/clay/`.
 2. Create one C source file in your application, for example `third_party/clay/clay_impl.c`:
 
 ```c
@@ -32,12 +38,17 @@ The Clay implementation must be compiled in exactly one translation unit.
 
 ## Verification
 
-With the setup above, compile the implementation to an object and run the smoke test:
+Run the complete API-name, C/Nim ABI, and runtime smoke validation against a
+checkout of the supported Clay revision:
 
 ```sh
-cc -Ithird_party/clay -c third_party/clay/clay_impl.c -o /tmp/clay_impl.o
-nim c -r --passC:-Ithird_party/clay --passL:/tmp/clay_impl.o --path:src tests/smoke.nim
+tests/run_validation.sh <path-to-clay>
 ```
+
+The ABI test compares the size and alignment of all 74 complete public value
+types, plus representative field offsets, between C and Nim. The API coverage
+check verifies all 42 exported Clay functions and all 75 public ABI type names,
+including the opaque `Clay_Context` type.
 
 ## License
 
