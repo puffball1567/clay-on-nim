@@ -1,5 +1,7 @@
 # Clay C API binding.
 #
+# Supported upstream revision: e6cc36941ab2af5d81107617039d6f527a1c660b.
+#
 # Clay itself is not bundled. Make `clay.h` available on the C include path
 # and link an implementation from exactly one C or C++ translation unit.
 {.push header: "clay.h".}
